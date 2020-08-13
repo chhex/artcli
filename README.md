@@ -1,1 +1,1 @@
-# artifactory_cli
+# Artifactory Command Line Tool
