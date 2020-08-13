@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+require "slop"
+require 'json'
+require 'readline'
+require 'highline/import'
+require 'artcli'
+require 'pp'
+def help(opts)
+  puts "A Command Line Tool for interacting with Artifactory "
+  puts opts
+end
+
+opts = Slop.parse do |o|
+  o.bool '-y', '--dry', 'Dry run, without invoking Jenkins cli via ssh', default: false
+  o.string '-r', '--uri', 'Base Artifactory URI ', default: 'artifactory4t4apgsga.jfrog.io/artifactory'
+  o.string '-l', '--listlocal' , 'List Local Repositories with a optional filter', default: ''
+  o.on '-h', '--help' do
+    help(o)
+    exit
+  end
+end
+
+user = ask("Enter artifactory userid: ")
+password = ask("Enter artifactory password: ") { |q| q.echo = false }
+command = Artcli::Cli.new(opts[:uri], user, password, opts[:dry])
+if opts[:listlocal]
+  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:listlocal]} "
+  pp command.list_repositories(opts[:listlocal])
+end
+puts "Done."
