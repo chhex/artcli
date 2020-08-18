@@ -15,12 +15,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="rbenv: jruby-9.2.11.1 facet library" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="artcli (v0.7.0, rbenv: jruby-9.2.11.1) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="artifactory (v3.0.15, rbenv: jruby-9.2.11.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="artifactory (v3.0.5, rbenv: jruby-9.2.11.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bcrypt (v3.1.15, rbenv: jruby-9.2.11.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v2.1.4, rbenv: jruby-9.2.11.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="filecache (v1.0.2, rbenv: jruby-9.2.11.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="highline (v2.0.3, rbenv: jruby-9.2.11.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="minitest (v5.14.1, rbenv: jruby-9.2.11.1) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rake (v12.3.3, rbenv: jruby-9.2.11.1) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="slop (v4.8.1, rbenv: jruby-9.2.11.1) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="slop (v4.8.2, rbenv: jruby-9.2.11.1) [gem]" level="application" />
   </component>
 </module>

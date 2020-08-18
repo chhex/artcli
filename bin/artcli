@@ -6,26 +6,75 @@ require 'readline'
 require 'highline/import'
 require 'artcli'
 require 'pp'
+require 'openssl'
+require 'filecache'
+
+class String
+  def encrypt(key)
+    cipher = OpenSSL::Cipher.new('DES-EDE3-CBC').encrypt
+    cipher.key = Digest::SHA1.hexdigest key
+    s = cipher.update(self) + cipher.final
+    s.unpack('H*')[0].upcase
+  end
+
+  def decrypt(key)
+    cipher = OpenSSL::Cipher.new('DES-EDE3-CBC').decrypt
+    cipher.key = Digest::SHA1.hexdigest key
+    s = [self].pack("H*").unpack("C*").pack("c*")
+    cipher.update(s) + cipher.final
+  end
+end
 def help(opts)
-  puts "A Command Line Tool for interacting with Artifactory "
+  puts "A Command Line Tool for interacting with Artifactory, Version: #{Artcli::VERSION} "
   puts opts
 end
 
+def get_encrypt_store_pw(cache)
+  password = ask("Enter artifactory password: ") { |q| q.echo = false }
+  encrypted = password.encrypt("artcli")
+  cache.set("pw",encrypted)
+  encrypted
+end
+
 opts = Slop.parse do |o|
-  o.bool '-y', '--dry', 'Dry run, without invoking Jenkins cli via ssh', default: false
-  o.string '-r', '--uri', 'Base Artifactory URI ', default: 'artifactory4t4apgsga.jfrog.io/artifactory'
-  o.string '-l', '--listlocal' , 'List Local Repositories with a optional filter', default: ''
+  o.bool '-y', '--dry', 'Dry run, not executing the commands', default: false
+  o.string '-u', '--user', 'Admin user for artifactory operations, you will be prompted for the password'
+  o.string '-r', '--uri', 'Base Artifactory URI, without https:// prefix ', default: 'artifactory4t4apgsga.jfrog.io/artifactory'
+  o.string '-l', '--list_local' , 'List Local Repositories matching a optional filter', default: ''
+  o.string '-d', '--delete_local' , 'Delete content of  Local Repositories matching optional filter', default: nil
+  o.bool '-p' , '--password', 'Force prompt for password, normally password will be cached encrypted ', default: false
   o.on '-h', '--help' do
     help(o)
     exit
   end
 end
-
-user = ask("Enter artifactory userid: ")
-password = ask("Enter artifactory password: ") { |q| q.echo = false }
-command = Artcli::Cli.new(opts[:uri], user, password, opts[:dry])
-if opts[:listlocal]
-  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:listlocal]} "
-  pp command.list_repositories(opts[:listlocal])
+# Preconditions
+#
+if !opts[:user]
+  help(opts)
+  puts "Error: Artifactory Admin user must be specificed with -u or --user"
+  exit
+end
+if !opts[:list_local] and opts[:deletelocal]
+  help(opts)
+  puts "Error: At least one operation must be selected"
+  exit
+end
+cache = FileCache.new("credentials", "/tmp/arti", 600, 1)
+if opts[:password]
+  get_encrypt_store_pw(cache)
+end
+encrypted = cache.get("pw")
+if nil == encrypted
+  encrypted  = get_encrypt_store_pw(cache)
+end
+command = Artcli::Cli.new(opts[:uri], opts[:user], encrypted.decrypt("artcli"), opts[:dry])
+if opts[:list_local]
+  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:list_local]} "
+  pp command.list_repositories(opts[:list_local])
+end
+if opts[:delete_local]
+  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:delete_local]} "
+  pp command.clean_repositories(opts[:delete_local])
 end
 puts "Done."

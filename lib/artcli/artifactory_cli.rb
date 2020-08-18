@@ -7,6 +7,7 @@ module Artcli
     def initialize(base_uri, user, passwd, dry_run = false)
       @user = user
       @passwd = passwd
+      puts @passwd
       @base_uri = "https://#{base_uri}"
       @dry_run = dry_run
     end
