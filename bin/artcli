@@ -6,34 +6,13 @@ require 'readline'
 require 'highline/import'
 require 'artcli'
 require 'pp'
-require 'openssl'
 require 'filecache'
+require 'secrets/secret'
 
-class String
-  def encrypt(key)
-    cipher = OpenSSL::Cipher.new('DES-EDE3-CBC').encrypt
-    cipher.key = Digest::SHA1.hexdigest key
-    s = cipher.update(self) + cipher.final
-    s.unpack('H*')[0].upcase
-  end
 
-  def decrypt(key)
-    cipher = OpenSSL::Cipher.new('DES-EDE3-CBC').decrypt
-    cipher.key = Digest::SHA1.hexdigest key
-    s = [self].pack("H*").unpack("C*").pack("c*")
-    cipher.update(s) + cipher.final
-  end
-end
 def help(opts)
   puts "A Command Line Tool for interacting with Artifactory, Version: #{Artcli::VERSION} "
   puts opts
-end
-
-def get_encrypt_store_pw(cache)
-  password = ask("Enter artifactory password: ") { |q| q.echo = false }
-  encrypted = password.encrypt("artcli")
-  cache.set("pw",encrypted)
-  encrypted
 end
 
 opts = Slop.parse do |o|
@@ -60,21 +39,31 @@ if !opts[:list_local] and opts[:deletelocal]
   puts "Error: At least one operation must be selected"
   exit
 end
-cache = FileCache.new("credentials", "/tmp/arti", 600, 1)
-if opts[:password]
-  get_encrypt_store_pw(cache)
+secrets = Secrets::Store.new
+if opts[:password] || !secrets.exist(opts[:user])
+  secrets.save(opts[:user],ask("Enter artifactory password: ") { |q| q.echo = false })
 end
-encrypted = cache.get("pw")
-if nil == encrypted
-  encrypted  = get_encrypt_store_pw(cache)
-end
-command = Artcli::Cli.new(opts[:uri], opts[:user], encrypted.decrypt("artcli"), opts[:dry])
+command = Artcli::Cli.new(opts[:uri], opts[:user], secrets.retrieve(opts[:user]), opts[:dry])
 if opts[:list_local]
-  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:list_local]} "
+  puts "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:list_local]} "
   pp command.list_repositories(opts[:list_local])
 end
 if opts[:delete_local]
-  pp "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:delete_local]} "
-  pp command.clean_repositories(opts[:delete_local])
+  puts "Filtered Local Repositories for #{opts[:uri]} with filter: #{opts[:delete_local]} "
+  selected_repos = command.list_repositories(opts[:delete_local])
+  puts "The following repos have been selected to be cleaned: #{selected_repos}"
+  ok = ask("Ok to proceed y/n: ")
+  if ok != 'y'
+    puts "Processing is beeing terminated"
+    exit
+  end
+  storage_uris_to_deleted = command.list_storage_uris(selected_repos)
+  puts "The following storage uri's have been selected to be cleaned: #{storage_uris_to_deleted}"
+  ok = ask("Ok to proceed y/n: ")
+  if ok != 'y'
+    puts "Processing is beeing terminated"
+    exit
+  end
+  pp command.clean_repositories(storage_uris_to_deleted)
 end
 puts "Done."

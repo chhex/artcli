@@ -6,13 +6,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Christoph Henrici"]
   spec.email         = ["chhenrici@gmail.com"]
 
-  spec.summary       = %q{Artifactory Command Client}
-  spec.description   = %q{Artifactory Command Client using the Ruby Artifactory Client.}
+  spec.summary       = %q{Artifactory cli}
+  spec.description   = %q{Custom Artifactory cmdline client using the Ruby Artifactory Rest Client.}
   spec.homepage      = "http://chesnb.com"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
+  spec.metadata["allowed_push_host"] = "http://172.16.92.193:9292'"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/chhex/artcli.git"
