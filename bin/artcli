@@ -13,13 +13,15 @@ require 'secrets/secret'
 def help(opts)
   puts "A Command Line Tool for interacting with Artifactory, Version: #{Artcli::VERSION} "
   puts opts
+  puts "The paramteers --user --password and --url need to be be before the functional parameters with arguments."
+  puts "Example: apscli -u xxx -p -l yum"
 end
 
 opts = Slop.parse do |o|
   o.bool '-y', '--dry', 'Dry run, not executing the commands', default: false
-  o.string '-u', '--user', 'Admin user for artifactory operations, you will be prompted for the password'
-  o.string '-r', '--uri', 'Base Artifactory URI, without https:// prefix ', default: 'artifactory4t4apgsga.jfrog.io/artifactory'
-  o.string '-l', '--list_local' , 'List Local Repositories matching a optional filter', default: ''
+  o.string '-u', '--user', 'Admin user for artifactory operations, will be prompted for the password'
+  o.string '-r', '--uri', 'Base Artifactory URI, without https:// prefix. Default : artifactory4t4apgsga.jfrog.io/artifactory', default: 'artifactory4t4apgsga.jfrog.io/artifactory'
+  o.string '-l', '--list_local' , 'List Local Repositories matching a optional filter', default:  nil
   o.string '-d', '--delete_local' , 'Delete content of  Local Repositories matching optional filter', default: nil
   o.bool '-p' , '--password', 'Force prompt for password, normally password will be cached encrypted ', default: false
   o.on '-h', '--help' do

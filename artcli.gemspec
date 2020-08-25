@@ -12,10 +12,10 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 
-  spec.metadata["allowed_push_host"] = "http://172.16.92.193:9292'"
+  spec.metadata["allowed_push_host"] = "http://172.16.92.193:9292"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/chhex/artcli.git"
+  spec.metadata["source_code_uri"] = "https://github.com/chhex/apscli.git"
 
   spec.add_dependency 'slop',  '~> 4.8', '>= 4.8.2'
   spec.add_dependency  'highline',  '~> 2.0', '>= 2.0.1'
@@ -29,6 +29,6 @@ Gem::Specification.new do |spec|
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.bindir        = "bin"
-  spec.executables   = 'artcli'
+  spec.executables   = 'apscli'
   spec.require_paths = ["lib"]
 end
