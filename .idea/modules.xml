@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../apgdb/apgdb.iml" filepath="$PROJECT_DIR$/../apgdb/apgdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../apgdbtests/apgdbtests.iml" filepath="$PROJECT_DIR$/../apgdbtests/apgdbtests.iml" />
       <module fileurl="file://$PROJECT_DIR$/../apscli/apscli.iml" filepath="$PROJECT_DIR$/../apscli/apscli.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/artcli.iml" filepath="$PROJECT_DIR$/.idea/artcli.iml" />
     </modules>

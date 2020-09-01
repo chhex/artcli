@@ -29,6 +29,6 @@ Gem::Specification.new do |spec|
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
   spec.bindir        = "bin"
-  spec.executables   = 'apscli'
+  spec.executables   = 'artcli'
   spec.require_paths = ["lib"]
 end
